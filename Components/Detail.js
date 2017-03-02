@@ -7,12 +7,11 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  Dimensions
+  Dimensions,Alert
 } from "react-native";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import * as Ac from "./reducers/Actions.js";
-var URL = "http://192.168.70.2:3000/item/";
 import {Actions} from "react-native-router-flux";
 var {height, width} = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -29,41 +28,50 @@ export class New extends Component {
 constructor(props) {
      super(props);
      this.state = {
-         isLoading: true
+         isLoading: true,
+         id:0,
+         name:"",
+         image:"",
+         cost:0,
+         info1:"",
+         info2:"",
+         status:0,
      };
  }
 componentDidMount() {
-      this.fetchData();
-      console.log(this.state.image);
+  this.setState({
+      id : this.props.Id,
+      name: this.props.Name,
+      image: this.props.Image,
+      cost: this.props.Cost,
+      info1: this.props.Info1,
+      info2: this.props.Info2,
+      status: this.props.Status,
+      isLoading: false
+  });
   }
-fetchData() {
-      let id = this.props.id;
-      id = id.toString();
-      URL = URL + id;
-      fetch(URL)
-      .then((response) => response.json())
-      .then((responseData) => {
-        console.log(responseData);
-          this.setState({
-              name: responseData[0].Name,
-              image: responseData[0].Image,
-              cost: responseData[0].Cost,
-              info1: responseData[0].Info1,
-              info2: responseData[0].Info2,
-              status: responseData[0].Status,
-              isLoading: false
-          });
-      })
-      .done();
-    }
+xacthuc(){
+  Alert.alert(
+    'Xác Nhận',
+    'Ban có muốn thêm sản phẩm vào giỏ hàng không ?',
+    [
+      {text: 'Không', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+      {text: 'Có', onPress: () => {this.addCart()}},
+    ],
+    { cancelable: false }
+  )
+}
 addCart(){
   let value = this.props.DATA.value + 1;
-  this.props.ADDCART({VALUE:value});
+  this.props.ADDCART({VALUE:value,ID:this.state.id});
+  this.giohang();
+}
+giohang(){
+  Actions.giohang();
 }
 render() {
        if (this.state.isLoading) {
            return this.renderLoadingView();
-           console.log("loading");
        }
 
        return (
@@ -108,7 +116,7 @@ render() {
                     </Text>
                   </View>
                   <View style={{marginTop:20,marginLeft:10,flexDirection:"row",alignItems:"center"}}>
-                    <TouchableOpacity style={{width:(width/2)-20,backgroundColor:"#F06292",flexDirection:"row",paddingLeft:30,paddingRight:30,paddingTop:7,paddingBottom:7}} onPress={()=>{this.addCart()}}>
+                    <TouchableOpacity style={{width:(width/2)-20,backgroundColor:"#F06292",flexDirection:"row",paddingLeft:30,paddingRight:30,paddingTop:7,paddingBottom:7}} onPress={()=>{this.xacthuc()}}>
                       <Icon name='cart-plus' size={20} style={{color:'#FFF',marginTop: 0, marginRight:10}} />
                       <Text style={{color:'#FFF', fontSize:16}}>
                         THÊM VÀO

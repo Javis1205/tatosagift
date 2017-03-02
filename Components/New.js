@@ -10,7 +10,7 @@ import {
   Dimensions
 } from "react-native";
 import {Actions} from "react-native-router-flux";
-var URL = "http://192.168.70.2:3000/items/1";
+var URL = "http://192.168.100.3:3000/items/1";
 var {height, width} = Dimensions.get('window');
 export default class New extends Component {
 constructor(props) {
@@ -29,7 +29,6 @@ fetchData() {
       fetch(URL)
       .then((response) => response.json())
       .then((responseData) => {
-        console.log(responseData);
           this.setState({
               dataSource: this.state.dataSource.cloneWithRows(responseData),
               isLoading: false
@@ -40,7 +39,6 @@ fetchData() {
 render() {
        if (this.state.isLoading) {
            return this.renderLoadingView();
-           console.log("loading");
        }
 
        return (
@@ -126,7 +124,7 @@ render() {
   }
 renderItems(item) {
        return (
-          <TouchableOpacity onPress={()=>{Actions.detail({id:item.Id})}}>
+          <TouchableOpacity onPress={()=>{Actions.detail({Id:item.Id,Cost:item.Cost,Name:item.Name,Info1:item.Info1,Info2:item.Info2,Status:item.Status,Image:item.Image})}}>
             <View style={{padding:10,backgroundColor:"#FFF",height:130,marginRight:10,marginBottom:10}}>
               <View style={{width:64,height:64,backgroundColor:"#E0E0E0",borderRadius:2}}>
                 <Image style={{width:60,height:60,marginTop:2,marginLeft:2}} source={{uri : item.Image}}/>
